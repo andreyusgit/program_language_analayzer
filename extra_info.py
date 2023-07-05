@@ -23,12 +23,12 @@ class RemoveExtraInfo:
                     code = row[1]
 
                     # Удаление комментариев и текста пользователя из кода в зависимости от языка программирования
-                    cleaned_code = RemoveExtraInfo.remove_comments_and_quotes(self, code, language)
+                    cleaned_code = RemoveExtraInfo._remove_comments_and_quotes(self, code, language)
 
                     # Запись очищенного кода в новый файл CSV
                     csv_writer.writerow([language, cleaned_code])
 
-    def remove_comments_and_quotes(self, code, language):
+    def _remove_comments_and_quotes(self, code, language):
         """
         Метод удаляет комментарии и пользовательский вывод из датасета
         :param code: код для очистки

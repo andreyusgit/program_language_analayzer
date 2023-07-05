@@ -61,15 +61,17 @@ class ExperimentModel:
         :param show_testing: нужно ли выводить подробные результаты тестирования
         """
         print('\nПОЛУЧЕННЫЕ РЕЗУЛЬТАТЫ:\n')
-        print("Precision = " + str(int(precision_score(y_true=self.test_df["language"],
-                                                       y_pred=self.model_pipeline.predict(self.test_df["code"]),
-                                                       average='weighted') * 100)) + "%")
-        print("Recall = " + str(int(recall_score(y_true=self.test_df["language"],
-                                                 y_pred=self.model_pipeline.predict(self.test_df["code"]),
-                                                 average='weighted') * 100)) + "%")
-        print("Accuracy = " + str(int(accuracy_score(y_true=self.test_df["language"],
-                                                      y_pred=self.model_pipeline.predict(
-                                                          self.test_df["code"])) * 100)) + "%")
+
+        y_true = self.test_df["language"]
+        y_pred = self.model_pipeline.predict(self.test_df["code"])
+
+        precision = precision_score(y_true, y_pred, average='weighted')
+        recall = recall_score(y_true, y_pred, average='weighted')
+        accuracy = accuracy_score(y_true, y_pred)
+
+        print("Precision = " + str(precision * 100) + "%")
+        print("Recall = " + str(recall * 100) + "%")
+        print("Accuracy = " + str(accuracy * 100) + "%")
 
         if show_testing:
             print("\nВывод тестовых результатов:\n")
@@ -78,7 +80,8 @@ class ExperimentModel:
                 res = self.model_pipeline.predict([self.test_df['code'][item]])[0]
                 color = Back.GREEN if ans == res else Back.RED
                 print(color + f"Ожидается: {self.test_df['language'][item]}; "
-                              f"Получено: {self.model_pipeline.predict([self.test_df['code'][item]])[0]}" + Style.RESET_ALL)
+                              f"Получено: {self.model_pipeline.predict([self.test_df['code'][item]])[0]}"
+                      + Style.RESET_ALL)
 
     def try_on_code(self, path_to_file: str):
         """
@@ -161,39 +164,45 @@ class FinalModel:
 
         if model_type == "LR" or model_type == "all":
             print('\nЛОГИСТИЧЕСКАЯ РЕГРЕСИЯ\n')
-            print("Precision = " + str(int(precision_score(y_true=self.test_df["language"],
-                                                           y_pred=self.model_LR_pipeline.predict(self.test_df["code"]),
-                                                           average='weighted') * 100)) + "%")
-            print("Recall = " + str(int(recall_score(y_true=self.test_df["language"],
-                                                     y_pred=self.model_LR_pipeline.predict(self.test_df["code"]),
-                                                     average='weighted') * 100)) + "%")
-            print("Accuracy = " + str(int(accuracy_score(y_true=self.test_df["language"],
-                                                         y_pred=self.model_LR_pipeline.predict(
-                                                             self.test_df["code"])) * 100)) + "%")
+
+            y_true = self.test_df["language"]
+            y_pred = self.model_LR_pipeline.predict(self.test_df["code"])
+
+            precision = precision_score(y_true, y_pred, average='weighted')
+            recall = recall_score(y_true, y_pred, average='weighted')
+            accuracy = accuracy_score(y_true, y_pred)
+
+            print("Precision = " + str(int(precision * 100)) + "%")
+            print("Recall = " + str(int(recall * 100)) + "%")
+            print("Accuracy = " + str(int(accuracy * 100)) + "%")
 
         if model_type == "SVC" or model_type == "all":
             print('\nМЕТОД ОПОРНЫХ ВЕКТОРОВ\n')
-            print("Precision = " + str(int(precision_score(y_true=self.test_df["language"],
-                                                           y_pred=self.model_SVC_pipeline.predict(self.test_df["code"]),
-                                                           average='weighted') * 100)) + "%")
-            print("Recall = " + str(int(recall_score(y_true=self.test_df["language"],
-                                                     y_pred=self.model_SVC_pipeline.predict(self.test_df["code"]),
-                                                     average='weighted') * 100)) + "%")
-            print("Accuracy = " + str(int(accuracy_score(y_true=self.test_df["language"],
-                                                         y_pred=self.model_SVC_pipeline.predict(
-                                                             self.test_df["code"])) * 100)) + "%")
+
+            y_true = self.test_df["language"]
+            y_pred = self.model_SVC_pipeline.predict(self.test_df["code"])
+
+            precision = precision_score(y_true, y_pred, average='weighted')
+            recall = recall_score(y_true, y_pred, average='weighted')
+            accuracy = accuracy_score(y_true, y_pred)
+
+            print("Precision = " + str(int(precision * 100)) + "%")
+            print("Recall = " + str(int(recall * 100)) + "%")
+            print("Accuracy = " + str(int(accuracy * 100)) + "%")
 
         if model_type == "SGD" or model_type == "all":
             print('\nМЕТОД ГРАДИЕНТНОГО СПУСКА\n')
-            print("Precision = " + str(int(precision_score(y_true=self.test_df["language"],
-                                                           y_pred=self.model_SGD_pipeline.predict(self.test_df["code"]),
-                                                           average='weighted') * 100)) + "%")
-            print("Recall = " + str(int(recall_score(y_true=self.test_df["language"],
-                                                     y_pred=self.model_SGD_pipeline.predict(self.test_df["code"]),
-                                                     average='weighted') * 100)) + "%")
-            print("Accuracy = " + str(int(accuracy_score(y_true=self.test_df["language"],
-                                                         y_pred=self.model_SGD_pipeline.predict(
-                                                             self.test_df["code"])) * 100)) + "%")
+
+            y_true = self.test_df["language"]
+            y_pred = self.model_SGD_pipeline.predict(self.test_df["code"])
+
+            precision = precision_score(y_true, y_pred, average='weighted')
+            recall = recall_score(y_true, y_pred, average='weighted')
+            accuracy = accuracy_score(y_true, y_pred)
+
+            print("Precision = " + str(int(precision * 100)) + "%")
+            print("Recall = " + str(int(recall * 100)) + "%")
+            print("Accuracy = " + str(int(accuracy * 100)) + "%")
 
     def learn_model(self, show_quantity_of_data: bool = False, model_type: str = "LR", param_grid: object = None):
         """
@@ -303,7 +312,7 @@ class FinalModel:
         index = 0
         for model in models:
             print(f'\nTests of {models_names[index]}:\n')
-            index+=1
+            index += 1
             for item in range(len(self.test_df['language'])):
                 ans = self.test_df['language'][item]
                 res = self.model_LR_pipeline.predict([self.test_df['code'][item]])[0]
@@ -316,15 +325,16 @@ class FinalModel:
 if __name__ == '__main__':
     experiment = ExperimentModel()
     experiment.learn_model()
-    experiment.result_of_learning(show_testing=False)
+    experiment.result_of_learning()
     experiment.try_on_code("test_code.txt")
 
+def test():
     final = FinalModel()
     final.learn_model(model_type="LR")
     final.model_stats("LR")
     final.try_on_code("test_code.txt", model_type="LR")
     user_param_grid = [
-        {'C': [0.01, 0.05, 0.1], 'solver': ['sag', 'saga']}]
+        {'C': [0.001, 0.005, 0.01], 'solver': ['sag', 'saga']}]
     final.learn_model(model_type="LR", param_grid=user_param_grid)
     final.model_stats("LR")
     final.try_on_code("test_code.txt", model_type="LR")
