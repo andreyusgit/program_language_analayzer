@@ -1,0 +1,25 @@
+#include <iostream>
+#include <algorithm>
+#include <string>
+#include <vector>
+
+void printArray(const std::vector<std::string>& arr) {
+    for (const std::string& item : arr) {
+        std::cout << item << " ";
+    }
+    std::cout << std::endl;
+}
+
+int main() {
+    std::vector<std::string> names = { "Alice", "Bob", "Charlie", "Eve", "David", "Frank" };
+
+    std::cout << "Исходный массив:" << std::endl;
+    printArray(names);
+
+    std::sort(names.begin(), names.end());
+
+    std::cout << "Отсортированный массив:" << std::endl;
+    printArray(names);
+
+    return 0;
+}
