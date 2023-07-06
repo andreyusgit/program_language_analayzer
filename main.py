@@ -1,3 +1,5 @@
+import joblib
+import msvcrt
 import pandas as pd
 from colorama import Back, Style
 from sklearn.linear_model import LogisticRegression
@@ -8,7 +10,6 @@ from sklearn.pipeline import Pipeline
 from nltk import word_tokenize
 from sklearn.metrics import precision_score, recall_score, accuracy_score
 from sklearn.model_selection import GridSearchCV
-import joblib
 
 
 class SupportMethods:
@@ -89,8 +90,18 @@ class ExperimentModel:
         :param path_to_file: путь до файла с кодом (файл должен лежать в проекте)
         """
         print('\n\nРЕЗУЛЬТАТ ПРОИЗВОЛЬНОГО КОДА:')
-        with open(path_to_file, 'r') as file:
-            text = file.read()
+        try:
+            with open(path_to_file, 'r') as file:
+                text = file.read()
+        except FileNotFoundError:
+            print(f"Файл '{path_to_file}' не найден.")
+            return
+        except IOError as e:
+            print(f"Ошибка ввода-вывода: {e}")
+            return
+        except Exception as e:
+            print(f"Произошла ошибка: {e}")
+            return
 
         print("Experimental Logistic Regression answer: " + self.model_pipeline.predict([text])[0])
 
@@ -160,6 +171,10 @@ class FinalModel:
         SGD - Gradient Descent
         all - all models
         """
+        if model_type != ("LR" and "SVC" and "SGD" and "all"):
+            print("Переданный тип модели не поддерживается")
+            return
+
         print('\n\n\nМЕТРИКИ ОБУЧЕННЫХ МОДЕЛЕЙ:')
 
         if model_type == "LR" or model_type == "all":
@@ -262,21 +277,30 @@ class FinalModel:
         print('\n\n\nОБУЧЕНИЕ МОДЕЛЕЙ\n\n\n')
         index = 0
         for model in models:
-            grid_pipeline = Pipeline([
-                ("vectorizer", TfidfVectorizer(tokenizer=lambda x: SupportMethods.tokenize_sentence(self.support, x),
-                                               token_pattern=None)),
-                ("model",
-                 GridSearchCV(
-                     model,
-                     param_grids[index],
-                     cv=5,
-                     verbose=4
-                 )
-                 )
-            ])
-            index += 1
-            grid_pipeline.fit(self.train_df['code'], self.train_df['language'])
-            best_params.append(grid_pipeline["model"].best_params_)
+            try:
+                grid_pipeline = Pipeline([
+                    (
+                        "vectorizer",
+                        TfidfVectorizer(tokenizer=lambda x: SupportMethods.tokenize_sentence(self.support, x),
+                                        token_pattern=None)),
+                    ("model",
+                     GridSearchCV(
+                         model,
+                         param_grids[index],
+                         cv=5,
+                         verbose=4
+                     )
+                     )
+                ])
+                index += 1
+                grid_pipeline.fit(self.train_df['code'], self.train_df['language'])
+                best_params.append(grid_pipeline["model"].best_params_)
+            except ValueError as e:
+                print(f"Ошибка значения: {e}")
+                return
+            except Exception as e:
+                print(f"Произошла ошибка: {e}")
+                return
         self._update_models(model_type, new_params=best_params)
 
     def try_on_code(self, path_to_file: str, model_type: str = 'all'):
@@ -290,8 +314,22 @@ class FinalModel:
         all - all models
         """
         print('\n\nРЕЗУЛЬТАТ ПРОИЗВОЛЬНОГО КОДА:\n')
-        with open(path_to_file, 'r') as file:
-            text = file.read()
+        try:
+            with open(path_to_file, 'r') as file:
+                text = file.read()
+        except FileNotFoundError:
+            print(f"Файл '{path_to_file}' не найден.")
+            return
+        except IOError as e:
+            print(f"Ошибка ввода-вывода: {e}")
+            return
+        except Exception as e:
+            print(f"Произошла ошибка: {e}")
+            return
+
+        if model_type != ("LR" and "SVC" and "SGD" and "all"):
+            print("Переданный тип модели не поддерживается")
+            return
 
         if model_type == "LR" or model_type == "all":
             print("Logistic Regression answer: " + self.model_LR_pipeline.predict([text])[0])
@@ -323,12 +361,6 @@ class FinalModel:
 
 
 if __name__ == '__main__':
-    experiment = ExperimentModel()
-    experiment.learn_model()
-    experiment.result_of_learning()
-    experiment.try_on_code("test_code.txt")
-
-def test():
     final = FinalModel()
     final.learn_model(model_type="LR")
     final.model_stats("LR")
