@@ -30,7 +30,7 @@ class RemoveExtraInfo:
 
     def _remove_comments_and_quotes(self, code, language):
         """
-        Метод удаляет комментарии и пользовательский вывод из датасета
+        Функция удаляет комментарии и пользовательский вывод из датасета
         :param code: код для очистки
         :param language: ЯП на котором написан этот код
         """

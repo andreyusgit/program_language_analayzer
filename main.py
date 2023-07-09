@@ -1,5 +1,4 @@
 import joblib
-import msvcrt
 import pandas as pd
 from colorama import Back, Style
 from sklearn.linear_model import LogisticRegression
@@ -15,7 +14,7 @@ from sklearn.model_selection import GridSearchCV
 class SupportMethods:
     def tokenize_sentence(self, sentence: str):
         """
-        Метод производит токенизацию текста, отправленного в него
+        Функция производит токенизацию текста, отправленного в него
         :param sentence: текст для токенизации
         """
         tokens = word_tokenize(sentence)
@@ -23,7 +22,7 @@ class SupportMethods:
 
     def get_data(self):
         """
-        Метод возвращает два словаря, один для тренировки, а другой для тестирования модели
+        Функция возвращает два словаря, один для тренировки, а другой для тестирования модели
         """
         train_data = pd.read_csv('converted_train.csv')
         train_data["code"].fillna("", inplace=True)
@@ -162,7 +161,7 @@ class FinalModel:
             )
             self.model_SGD_pipeline.fit(self.train_df['code'], self.train_df['language'])
 
-    def model_stats(self, model_type: str):
+    def model_stats(self, model_type: str = "all"):
         """
         Метод выводящий метрики актуальных моделей
         :param model_type: модель для которой нужно обновить параметры. Принимает параметры:
@@ -219,7 +218,7 @@ class FinalModel:
             print("Recall = " + str(int(recall * 100)) + "%")
             print("Accuracy = " + str(int(accuracy * 100)) + "%")
 
-    def learn_model(self, show_quantity_of_data: bool = False, model_type: str = "LR", param_grid: object = None):
+    def learn_model(self, show_quantity_of_data: bool = False, model_type: str = 'all', param_grid: object = None):
         """
         Метод обучает модель/модели по датасету полученному на этапе инициализации класса и сохраняет
         оптимальные параметры в отдельные файлы для каждой модели, далее модели создаются по параметрам из этих файлов
@@ -360,14 +359,50 @@ class FinalModel:
                       Style.RESET_ALL)
 
 
-if __name__ == '__main__':
+# тесты для экспериментальной модели
+def learn_exp_model():
+    exp = ExperimentModel()
+    exp.learn_model()
+    exp.result_of_learning()
+
+
+def exp_try_on_code():
+    exp = ExperimentModel()
+    exp.learn_model()
+    exp.try_on_code("test_code.txt")
+
+
+# тесты для финальной модели
+def learn_all_models():
+    final = FinalModel()
+    final.learn_model()
+    final.model_stats()
+
+
+def bad_train_test():
     final = FinalModel()
     final.learn_model(model_type="LR")
     final.model_stats("LR")
+    print("\n\nРезультат хорошо обученной модели:\n\n")
     final.try_on_code("test_code.txt", model_type="LR")
     user_param_grid = [
         {'C': [0.001, 0.005, 0.01], 'solver': ['sag', 'saga']}]
     final.learn_model(model_type="LR", param_grid=user_param_grid)
     final.model_stats("LR")
+    print("\n\nРезультат плохо обученной модели:\n\n")
     final.try_on_code("test_code.txt", model_type="LR")
+
+
+def stats_of_final_model():
+    final = FinalModel()
+    final.model_stats()
+
+
+def tests_of_final_model():
+    final = FinalModel()
     final.test_all_models()
+
+
+if __name__ == '__main__':
+    stats_of_final_model()
+    tests_of_final_model()
