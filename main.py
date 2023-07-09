@@ -366,10 +366,10 @@ def learn_exp_model():
     exp.result_of_learning()
 
 
-def exp_try_on_code():
+def exp_try_on_code(file_name: str = "test_code.txt"):
     exp = ExperimentModel()
     exp.learn_model()
-    exp.try_on_code("test_code.txt")
+    exp.try_on_code(file_name)
 
 
 # тесты для финальной модели
@@ -379,18 +379,18 @@ def learn_all_models():
     final.model_stats()
 
 
-def bad_train_test():
+def bad_train_test(file_name: str = "test_code.txt"):
     final = FinalModel()
     final.learn_model(model_type="LR")
     final.model_stats("LR")
     print("\n\nРезультат хорошо обученной модели:\n\n")
-    final.try_on_code("test_code.txt", model_type="LR")
+    final.try_on_code(file_name, model_type="LR")
     user_param_grid = [
         {'C': [0.001, 0.005, 0.01], 'solver': ['sag', 'saga']}]
     final.learn_model(model_type="LR", param_grid=user_param_grid)
     final.model_stats("LR")
     print("\n\nРезультат плохо обученной модели:\n\n")
-    final.try_on_code("test_code.txt", model_type="LR")
+    final.try_on_code(file_name, model_type="LR")
 
 
 def stats_of_final_model():
